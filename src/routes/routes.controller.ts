@@ -9,7 +9,7 @@ import {
   OnModuleInit,
   Inject
 } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
+import { ClientKafka, MessagePattern, Payload } from '@nestjs/microservices';
 import { RoutesService } from './routes.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
@@ -65,5 +65,15 @@ export class RoutesController implements OnModuleInit {
         }
       ]
     });
+  }
+
+  @MessagePattern('route.new-position')
+  async consumeNewPosition(
+    @Payload()
+    message: {
+      value: { routerId: string; clientId: string; position: [number, number]; finished: boolean };
+    }
+  ) {
+    console.log('consumer: ', message);
   }
 }
